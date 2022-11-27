@@ -1,16 +1,19 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { nanoid } from 'nanoid';
 import toast from 'react-hot-toast';
 
-import { setContactsAction, getContactsArr } from '../../redux/contactsSlice';
+import { useAddNewContactMutation } from '../../redux/contactsSlice';
+import { useFetchContactsQuery } from '../../redux/contactsSlice';
 
 import { FormTag, InputField, FormBtn } from './Form.styled';
+
+// -------
 
 export default function Form() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const dispatch = useDispatch();
+  const { data: contacts } = useFetchContactsQuery();
+
+  const [addNewContact, { isLoading }] = useAddNewContactMutation();
 
   const handleChange = evt => {
     switch (evt.target.name) {
@@ -20,7 +23,6 @@ export default function Form() {
       case 'number':
         setNumber(evt.target.value);
         break;
-
       default:
         return;
     }
@@ -28,27 +30,23 @@ export default function Form() {
 
   const handleSubmit = evt => {
     evt.preventDefault();
-    formSubmitHandler({ name, number });
-    resetState();
-  };
+    const isMatch = checkForMatches(name);
 
-  const contacts = useSelector(getContactsArr);
-  // add new contact
-  const formSubmitHandler = ({ name, number }) => {
-    // checking name for matches
-    const normalizedName = name.toLowerCase();
-    const isFoundName = contacts.some(
-      contact => contact.name.toLowerCase() === normalizedName
-    );
-    // if already exist - show message
-    if (isFoundName) {
+    if (isMatch) {
       toast.error(`${name} is already in contacts!`);
       return;
     }
-    // if not found, add new contact
-    const newData = { id: nanoid(5), name, number };
-    dispatch(setContactsAction(newData));
+
+    addNewContact({ name, number });
     toast.success('Successfully added!');
+    resetState();
+  };
+
+  const checkForMatches = name => {
+    const normalizedName = name.toLowerCase();
+    return contacts.some(
+      contact => contact.name.toLowerCase() === normalizedName
+    );
   };
 
   const resetState = () => {
@@ -83,7 +81,9 @@ export default function Form() {
         />
       </label>
       <p>
-        <FormBtn type="submit">Add contact</FormBtn>
+        <FormBtn type="submit" disabled={isLoading}>
+          {isLoading ? 'Adding...' : 'Add contact'}
+        </FormBtn>
       </p>
     </FormTag>
   );

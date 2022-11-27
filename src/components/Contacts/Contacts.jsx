@@ -1,44 +1,37 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 
-import { delContactAction, getContactsArr } from '../../redux/contactsSlice';
-
 import { getFilterValue } from '../../redux/filterSlice';
+import { useFetchContactsQuery } from '../../redux/contactsSlice';
 
-import {
-  ContactsList,
-  ContactsListItem,
-  UserName,
-  DeleteBtn,
-} from './Contacts.styled';
+import ContactsListItem from './ListItem';
+
+import { ContactsList } from './Contacts.styled';
 
 export default function Contacts() {
-  const contacts = useSelector(getContactsArr);
-  const filter = useSelector(getFilterValue);
-  const dispatch = useDispatch();
+  const { data: contacts, error, isLoading } = useFetchContactsQuery();
 
   // for filter
+  const filter = useSelector(getFilterValue);
   const normalizedFilter = filter.toLowerCase();
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizedFilter)
-  );
+  let filteredContacts = [];
+  if (contacts) {
+    filteredContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  }
 
-  const deleteContact = id => {
-    dispatch(delContactAction(id));
-    toast.success('Successfully deleted!');
-  };
+  if (error) {
+    toast.error(`Error: ${error.data}`);
+  }
 
   return (
     <ContactsList>
-      {filteredContacts.map(({ name, number, id }) => (
-        <ContactsListItem key={id}>
-          <p>
-            <UserName>{name}: </UserName>
-            {number}
-          </p>
-          <DeleteBtn onClick={() => deleteContact(id)}>delete</DeleteBtn>
-        </ContactsListItem>
-      ))}
+      {isLoading && <p>Loading...</p>}
+      {contacts &&
+        filteredContacts.map(contact => (
+          <ContactsListItem key={contact.id} {...contact} />
+        ))}
     </ContactsList>
   );
 }
