@@ -2,7 +2,7 @@
 
 ## React, Redux Toolkit, RTK Query
 
-[live page](https://Falconoff.github.io/goit-react-hw-07-phonebook/)
+[live page](https://MarynaHl.github.io/goit-react-hw-07-phonebook/)
 
 ## Used:
 
