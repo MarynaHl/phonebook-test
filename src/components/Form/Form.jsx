@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-import { useAddNewContactMutation } from '../../redux/contactsSlice';
-import { useFetchContactsQuery } from '../../redux/contactsSlice';
+import {
+  useAddNewContactMutation,
+  useFetchContactsQuery,
+} from '../../redux/contacts/contactsApi';
 
 import { FormTag, InputField, FormBtn } from './Form.styled';
-
-// -------
 
 export default function Form() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const { data: contacts } = useFetchContactsQuery();
 
-  const [addNewContact, { isLoading }] = useAddNewContactMutation();
+  const [addNewContact, { isLoading, isSuccess }] = useAddNewContactMutation();
 
   const handleChange = evt => {
     switch (evt.target.name) {
@@ -38,7 +38,9 @@ export default function Form() {
     }
 
     addNewContact({ name, number });
-    toast.success('Successfully added!');
+    if (isSuccess) {
+      toast.success('Successfully added!');
+    }
     resetState();
   };
 
