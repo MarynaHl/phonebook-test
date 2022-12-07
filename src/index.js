@@ -1,24 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { store, persistor } from './redux/store';
+import './sass/main.scss';
 
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
+//=========layout=================
+import './js/refs/refs.js';
 
-import App from './App.jsx';
+//functions
+import './js/layout/local-storage';
+import './js/layout/render-by-template';
+import './js/layout/render-storage-array';
+import './js/layout/transformation-genre';
 
-import 'modern-normalize/modern-normalize.css';
-import './index.css';
+//header
+import './js/layout/header';
+import './js/layout/filter';
+import './js/layout/search-by-keyword';
+import './js/layout/switchTheme.js';
+//main
+import './js/layout/render-main-list';
+import './js/layout/fetch-by-Id';
+import './js/layout/week-movies';
+import './js/layout/render-genres-list';
+import './js/layout/pagination';
+import './js/layout/language';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <BrowserRouter basename="/goit-react-hw-08-phonebook/">
-          <App />
-        </BrowserRouter>
-      </PersistGate>
-    </Provider>
-  </React.StrictMode>
-);
+//footer
+import './js/components/contacts';
+
+//=========components===============
+import './js/components/spiner.js';
+import './js/components/modal.js';
+import './js/components/notifications.js';
+import './js/components/video-player.js';
+import './js/components/scroll-to-top';
+import './js/components/background';
+import './js/components/no-scroll.js';
+import './js/components/arrows-on-modal'
+
+//=============api==================
+import './js/api/api-service.js';
